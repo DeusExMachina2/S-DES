@@ -59,31 +59,35 @@ class MyMainWindow(QtWidgets.QMainWindow):
 
     def encrypt_page2(self):
         # 获取page2中文本
-        input_text_page2 = (self.ui.lineEdit_text2.text())
+        input_text_page2 = (self.ui.TextEdit_text2.toPlainText())
         input_key_page2 = (self.ui.lineEdit_key2.text())
         label_text_page2 = extended_function(input_text_page2, [int(char) for char in input_key_page2])
-        self.ui.label2.setText(label_text_page2)
+        self.ui.textBrowser.setPlainText(label_text_page2)
 
     def decrypt_page2(self):
         # 获取page2中文本
-        input_text_page2 = self.ui.lineEdit_text2.text()
+        input_text_page2 = self.ui.TextEdit_text2.toPlainText()
         input_key_page2 = self.ui.lineEdit_key2.text()
         label_text_page2 = extended_function(input_text_page2, [int(char) for char in input_key_page2], inv=True)
-        self.ui.label2.setText(label_text_page2)
+        self.ui.textBrowser.setText(label_text_page2)
 
     def toggle_page3(self):
         self.ui.stackedWidget1.setCurrentIndex(2)
 
     def Brute_orce(self):
-        input_ciphertext_page3 = self.ui.lineEdit_ciphertext_3.text()
-        input_plaintext_page3 = self.ui.lineEdit_plaintext_3.text()
+        input_ciphertext_page3 = self.ui.TextEdit_ciphertext_3.toPlainText()
+        input_plaintext_page3 = self.ui.TextEdit_plaintext_3.toPlainText()
         start_time = time.perf_counter()
         label_text_page3 = bruteforce_cracking(input_ciphertext_page3, input_plaintext_page3)
         elapsed_time = time.perf_counter() - start_time
         if label_text_page3:
-            self.ui.label3.setText(str(label_text_page3) + "   耗时为" + str(elapsed_time))
+            text = ""
+            for item in label_text_page3:
+                key = [str(num) for num in item]
+                text += ''.join(key) + "\n"
+            self.ui.textBrowser_2.setPlainText((text + "耗时为" + str(elapsed_time)))
         else:
-            self.ui.label3.setText("无匹配密码")
+            self.ui.textBrowser_2.setPlainText("无匹配密码")
 
     def open_close_window(self):
         if self.is_window_open:
@@ -181,14 +185,14 @@ class Ui_MainWindow(object):
         self.stackedWidget1.addWidget(self.page)
         self.page_2 = QtWidgets.QWidget()
         self.page_2.setObjectName("page_2")
-        self.lineEdit_text2 = QtWidgets.QLineEdit(self.page_2)
-        self.lineEdit_text2.setGeometry(QtCore.QRect(180, 280, 411, 21))
-        self.lineEdit_text2.setObjectName("lineEdit_text2")
+        self.TextEdit_text2 = QtWidgets.QTextEdit(self.page_2)
+        self.TextEdit_text2.setGeometry(QtCore.QRect(180, 280, 411, 51))
+        self.TextEdit_text2.setObjectName("lineEdit_text2")
         self.Button_decrypt2 = QtWidgets.QPushButton(self.page_2)
         self.Button_decrypt2.setGeometry(QtCore.QRect(400, 390, 93, 28))
         self.Button_decrypt2.setObjectName("Button_decrypt2")
         self.lineEdit_key2 = QtWidgets.QLineEdit(self.page_2)
-        self.lineEdit_key2.setGeometry(QtCore.QRect(180, 310, 411, 21))
+        self.lineEdit_key2.setGeometry(QtCore.QRect(180, 350, 411, 21))
         self.lineEdit_key2.setObjectName("lineEdit_key2")
         self.label_text2 = QtWidgets.QLabel(self.page_2)
         self.label_text2.setGeometry(QtCore.QRect(60, 270, 121, 41))
@@ -198,15 +202,12 @@ class Ui_MainWindow(object):
         self.label_text2.setFont(font)
         self.label_text2.setObjectName("label_text2")
         self.label_key2 = QtWidgets.QLabel(self.page_2)
-        self.label_key2.setGeometry(QtCore.QRect(130, 300, 41, 41))
+        self.label_key2.setGeometry(QtCore.QRect(130, 340, 41, 41))
         font = QtGui.QFont()
         font.setFamily("微软雅黑")
         font.setPointSize(11)
         self.label_key2.setFont(font)
         self.label_key2.setObjectName("label_key2")
-        self.listView_3 = QtWidgets.QListView(self.page_2)
-        self.listView_3.setGeometry(QtCore.QRect(180, 150, 411, 51))
-        self.listView_3.setObjectName("listView_3")
         self.label2 = QtWidgets.QLabel(self.page_2)
         self.label2.setTextInteractionFlags(Qt.TextSelectableByMouse)
         self.label2.setGeometry(QtCore.QRect(360, 170, 400, 15))
@@ -234,18 +235,23 @@ class Ui_MainWindow(object):
         self.Button_change1_3 = QtWidgets.QPushButton(self.page_3)
         self.Button_change1_3.setGeometry(QtCore.QRect(310, 310, 93, 28))
         self.Button_change1_3.setObjectName("Button_change1_3")
-        self.lineEdit_ciphertext_3 = QtWidgets.QLineEdit(self.page_3)
-        self.lineEdit_ciphertext_3.setGeometry(QtCore.QRect(40, 60, 261, 171))
-        self.lineEdit_ciphertext_3.setObjectName("lineEdit_ciphertext_3")
-        self.lineEdit_plaintext_3 = QtWidgets.QLineEdit(self.page_3)
-        self.lineEdit_plaintext_3.setGeometry(QtCore.QRect(420, 60, 261, 171))
-        self.lineEdit_plaintext_3.setObjectName("lineEdit_plaintext_3")
-        self.label3 = QtWidgets.QLabel(self.page_3)
-        self.label3.setGeometry(QtCore.QRect(160, 350, 411, 200))
-        self.label3.setText("")
-        self.label3.setWordWrap(True)
+        self.TextEdit_ciphertext_3 = QtWidgets.QTextEdit(self.page_3)
+        self.TextEdit_ciphertext_3.setGeometry(QtCore.QRect(40, 60, 261, 171))
+        self.TextEdit_ciphertext_3.setObjectName("TextEdit_ciphertext_3")
+        self.TextEdit_plaintext_3 = QtWidgets.QTextEdit(self.page_3)
+        self.TextEdit_plaintext_3.setGeometry(QtCore.QRect(420, 60, 261, 171))
+        self.TextEdit_plaintext_3.setObjectName("TextEdit_plaintext_3")
+        self.textBrowser = QtWidgets.QTextBrowser(self.page_2)
+        self.textBrowser.setGeometry(QtCore.QRect(180, 130, 411, 91))
+        self.textBrowser.setObjectName("textBrowser")
+
+        self.textBrowser_2 = QtWidgets.QTextBrowser(self.page_3)
+        self.textBrowser_2.setGeometry(QtCore.QRect(150, 370, 491, 192))
+        self.textBrowser_2.setObjectName("textBrowser_2")
+
         self.stackedWidget1.addWidget(self.page_3)
         self.horizontalLayout.addWidget(self.frame_2)
+
         MainWindow.setCentralWidget(self.centralwidget)
         self.statusbar = QtWidgets.QStatusBar(MainWindow)
         self.statusbar.setObjectName("statusbar")
