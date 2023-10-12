@@ -1,4 +1,5 @@
 from extended_function import extended_function
+import threading
 import time
 
 
@@ -13,6 +14,20 @@ def generate_all_possible_keys():
 	return possible_keys
 
 
+def bruteforce_cracking_sub(keys, text, ciphertext, possible_keys_sub):
+	"""
+	暴力破解的并行子程序
+	:param keys: 负责传回密钥
+	:param text: 明文
+	:param ciphertext: 密文
+	:return: 与明密文对符合的密钥组
+	:param possible_keys_sub: 可能的密钥组
+	"""
+	for k_guess in possible_keys_sub:
+		if ciphertext == extended_function(text, k_guess):
+			keys.append(k_guess)
+
+
 def bruteforce_cracking(text, ciphertext):
 	"""
 	尝试暴力破解
@@ -20,17 +35,28 @@ def bruteforce_cracking(text, ciphertext):
 	:param ciphertext: 密文
 	:return: 与明密文对符合的密钥组
 	"""
+	threads = []
 	keys = []
-	for k_guess in generate_all_possible_keys():
-		if ciphertext == extended_function(text, k_guess):
-			keys.append(k_guess)
+	possible_keys = generate_all_possible_keys()
+	idx = 0
+	for i in range(4):
+		sub_keys = threading.Thread(target=bruteforce_cracking_sub,
+		                            args=(keys, text, ciphertext, possible_keys[idx:idx + 256]))
+		threads.append(sub_keys)
+		sub_keys.start()
+		idx += 256
+	for thread in threads:
+		thread.join()
+	# for k_guess in possible_keys():
+	# 	if ciphertext == extended_function(text, k_guess):
+	# 		keys.append(k_guess)
 	return keys
 
 
 if __name__ == '__main__':
 	# 第四关: 暴力破解
-	input_text = "Hello, World!"
-	key = [1, 1, 1, 1, 1, 0, 1, 1, 0, 1]
+	input_text = "H"
+	key = [1, 1, 1, 1, 1, 0, 0, 0, 0, 0]
 	ciphertext = extended_function(input_text, key)
 	# 尝试破解密钥, 开始计时
 	start_time = time.perf_counter()
